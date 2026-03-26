@@ -1,57 +1,65 @@
+
 import "./styles/Work.css";
 import WorkImage from "./WorkImage";
 import gsap from "gsap";
+import { useEffect } from "react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { useGSAP } from "@gsap/react";
 
-gsap.registerPlugin(useGSAP);
+gsap.registerPlugin(ScrollTrigger);
 
 const Work = () => {
-  useGSAP(() => {
-  let translateX: number = 0;
+  useEffect(() => {
+    let translateX = 0;
 
-  function setTranslateX() {
-    const box = document.getElementsByClassName("work-box");
-    const rectLeft = document
-      .querySelector(".work-container")!
-      .getBoundingClientRect().left;
-    const rect = box[0].getBoundingClientRect();
-    const parentWidth = box[0].parentElement!.getBoundingClientRect().width;
-    let padding: number =
-      parseInt(window.getComputedStyle(box[0]).padding) / 2;
-    translateX = rect.width * box.length - (rectLeft + parentWidth) + padding;
-  }
+    function setTranslateX() {
+      const box = document.getElementsByClassName("work-box");
 
-  setTranslateX();
+      if (!box.length) return;
 
-  let timeline = gsap.timeline({
-    scrollTrigger: {
-      trigger: ".work-section",
-      start: "top top",
-      end: `+=${translateX}`, // Use actual scroll width
-      scrub: true,
-      pin: true,
-      id: "work",
-    },
-  });
+      const rectLeft = document
+        .querySelector(".work-container")
+        ?.getBoundingClientRect().left || 0;
 
-  timeline.to(".work-flex", {
-    x: -translateX,
-    ease: "none",
-  });
+      const rect = (box[0] as HTMLElement).getBoundingClientRect();
+      const parentWidth = (box[0] as HTMLElement).parentElement?.getBoundingClientRect().width || 0;
 
-  // Clean up (optional, good practice)
-  return () => {
-    timeline.kill();
-    ScrollTrigger.getById("work")?.kill();
-  };
-}, []);
+      let padding =
+        parseInt(window.getComputedStyle(box[0] as Element).padding) / 2;
+
+      translateX = rect.width * box.length - (rectLeft + parentWidth) + padding;
+    }
+
+    setTranslateX();
+
+    const timeline = gsap.timeline({
+      scrollTrigger: {
+        trigger: ".work-section",
+        start: "top top",
+        end: `+=${translateX}`,
+        scrub: true,
+        pin: true,
+        id: "work",
+      },
+    });
+
+    timeline.to(".work-flex", {
+      x: -translateX,
+      ease: "none",
+    });
+
+    return () => {
+      timeline.kill();
+      ScrollTrigger.getById("work")?.kill();
+    };
+  }, []);
+
   return (
     <div className="work-section" id="work">
       <div className="work-container section-container">
         <h2>
           My <span>Work</span>
         </h2>
+
         <div className="work-flex">
           {[...Array(6)].map((_value, index) => (
             <div className="work-box" key={index}>
@@ -60,14 +68,22 @@ const Work = () => {
                   <h3>0{index + 1}</h3>
 
                   <div>
-                    <h4>Project Name</h4>
-                    <p>Category</p>
+                    <h4>Travel Ticket Booking</h4>
+                    <p>Full stack</p>
                   </div>
                 </div>
-                <h4>Tools and features</h4>
-                <p>Javascript, TypeScript, React, Threejs</p>
+
+                <h4>Travel Ticket Booking</h4>
+                <p>Java, OOP, File Handling, Exception Handling</p>
+
+
               </div>
-              <WorkImage image="/images/placeholder.webp" alt="" />
+              <div><h4>AWS Static Website Hosting</h4>
+<p>AWS EC2, S3, GitHub, Deployment</p>
+</div>
+              
+
+              <WorkImage image="/images/placeholder.webp" alt="project" />
             </div>
           ))}
         </div>
@@ -77,3 +93,4 @@ const Work = () => {
 };
 
 export default Work;
+
